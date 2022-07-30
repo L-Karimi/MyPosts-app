@@ -17,8 +17,3 @@ data class Comment(
 )
 
 //Generic function
-fun <T> compareObjects(item1:T,item2:T):T{
-    return  item1
-}
-fun main(){
-}
