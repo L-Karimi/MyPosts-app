@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dev.lucy.myposts.databinding.PostListItemBinding
 
-class PostAdapter(var context: Context, var postlist: List<Post>) :
-    RecyclerView.Adapter<PostViewHolder>() {
+class PostAdapter( var postlist: List<Post>) :RecyclerView.Adapter<PostViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         var binding =
             PostListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,7 +22,9 @@ class PostAdapter(var context: Context, var postlist: List<Post>) :
             holder.binding.tvTitle.text = currentPost.title.toString()
             holder.binding.tvbody.text = currentPost.body.toString()
             holder.binding.cvpost.setOnClickListener {
+                var context=holder.itemView.context
                 val intent = Intent(context, CommentsActivity::class.java)
+                intent.putExtra("POST_ID",currentPost.Id)
                 context.startActivity(intent)
             }
         }
