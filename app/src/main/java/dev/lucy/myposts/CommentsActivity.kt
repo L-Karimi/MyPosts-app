@@ -30,8 +30,8 @@ class CommentsActivity : AppCompatActivity() {
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
                 if (response.isSuccessful) {
                     val post = response.body()
-                    binding.tvPostTittle.text = post?.title
-                    binding.tvPostBody.text = post?.body
+                    binding.tvTitle.text = post?.title
+                    binding.tvBody.text = post?.body
                 }
             }
 

@@ -18,6 +18,7 @@
         <activity
             android:name=".CommentsActivity"
             android:exported="false" />
+        <meta-data android:name="androids"></meta-data>
         <activity
             android:name=".MainActivity"
             android:exported="true">
