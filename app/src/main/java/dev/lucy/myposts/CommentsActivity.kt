@@ -3,6 +3,7 @@ package dev.lucy.myposts
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import dev.lucy.myposts.databinding.ActivityCommentsBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -10,35 +11,60 @@ import retrofit2.Response
 
 class CommentsActivity : AppCompatActivity() {
     var postId = 0
-    lateinit var binding: ActivityCommentsBinding
+    lateinit var binding:ActivityCommentsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivityCommentsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         obtainPostId()
-        fetchPostsId()
+        fetchPostId()
+        setUpToolbar()
+        fetchComments()
     }
-
-    fun obtainPostId() {
-        postId = intent.extras?.getInt("POST_ID") ?: 0
+    fun obtainPostId(){
+        postId=intent.extras?.getInt("POST_ID")?:0
     }
-
-    fun fetchPostsId() {
-        val apiClient = ApiClient.buildApiClient(ApiInterface::class.java)
-        var request = apiClient.getPostById(postId)
+    fun fetchPostId(){
+        val apiClient=ApiClient.buildApiClient(ApiInterface::class.java)
+        val request=apiClient.getPostById(postId)
         request.enqueue(object : Callback<Post> {
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                if (response.isSuccessful) {
-                    val post = response.body()
-                    binding.tvTitle.text = post?.title
-                    binding.tvBody.text = post?.body
+                if(response.isSuccessful){
+                    var post=response.body()
+                    binding.tvBody.text=post?.body
+                    binding.tvTitle.text=post?.title
                 }
             }
 
             override fun onFailure(call: Call<Post>, t: Throwable) {
-                Toast.makeText(baseContext, t.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(baseContext,t.message,Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+    fun setUpToolbar(){
+        setSupportActionBar(binding.toolbarComments)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+//        supportActionBar?.g
+    }
+    fun fetchComments(){
+        var apiClient=ApiClient.buildApiClient(ApiInterface::class.java)
+        var request=apiClient.getComments()
+        request.enqueue(object : Callback<List<Comment>> {
+            override fun onResponse(call: Call<List<Comment>>, response: Response<List<Comment>>) {
+                if(response.isSuccessful){
+                    var comments=response.body()
+                    Toast.makeText(baseContext,"fetched ${comments!!.size} posts",Toast.LENGTH_LONG).show()
+
+                    var commentAdapter=CommentsAdapter(comments)
+                    binding.rvComments.layoutManager= LinearLayoutManager(this@CommentsActivity)
+                    binding.rvComments.adapter=commentAdapter
+                }
             }
 
+            override fun onFailure(call: Call<List<Comment>>, t: Throwable) {
+                Toast.makeText(baseContext,t.message,Toast.LENGTH_SHORT).show()
+            }
         })
     }
 }
